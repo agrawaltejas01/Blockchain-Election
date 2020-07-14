@@ -62,6 +62,7 @@ contract Election
     // candidate['id'].toNumber
     // candidate['name']
 
+    event votedEvent( uint indexed _candidateId);
 
     // Solidity allows to pass meta data to function along with paramertes
     // vote(1 { from : .... }) => {} = metadata
@@ -78,6 +79,9 @@ contract Election
         // record that user has voted
         voters[msg.sender] = true;
         candidates[_candidateId].voteCount++;
+
+        // If successful trigger the votedEvent
+        emit votedEvent(_candidateId);
     }
 
     // Election.deployed().then(function(i) { app = i;})

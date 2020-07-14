@@ -45,10 +45,28 @@ App =
 			// Connect provider to interact with contract
 			App.contracts.Election.setProvider(App.web3Provider);
 
+			// Listen for events when a vote has been casted
+			App.listenForEvents();
+			
 			return App.render();
 		});		
 	},
 	
+	listenForEvents: function()
+	{
+		App.contracts.Election.deployed().then(function(instance) {
+			instance.votedEvent({}, {	// first {} is for filters, solidity allows to pass a filter, here no need
+				fromBlock : 0,		// staerting block of blockchain
+				toBlock : 'latest',  // Ending block of blockcain
+				// This means that we want to listen to votedEvent on entire blocks of blockchain
+			}).watch(function (error, event) {
+				console.log("Event triggered", event);
+
+				// Reload when new vote is recieved
+				App.render();
+			})
+		})
+	},
 
 	render: function () 
 	{
