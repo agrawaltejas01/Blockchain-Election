@@ -83,78 +83,52 @@ App =
 			var candidatesResult = $("#candidatesResult");
 			candidatesResult.empty();
 
+			var candidateSelect = $("#candidateSelect");
+			candidateSelect.empty();
+
 			for (let i = 1; i <= candidatesCount; i++) {
 				electionInstance.candidates(i).then(function (candidate) {
 					var id = candidate[0];
 					var name = candidate[1];
 					var voteCount = candidate[2];
 
+					// Render list of candidate name in select option
+					var candidateSelectTemplate = "<option value = '" + id + "'>" + name + "</option>";
+					candidateSelect.append(candidateSelectTemplate);
+
 					// Render Candidate Result
 					var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>";
 					candidatesResult.append(candidateTemplate);
 				});				
 			}
-
+			return electionInstance.voters(App.account);
+		}).then(function (hasVoted) {
+			// Do not allow user to vote
+			if(hasVoted)
+			{
+				$('form').hide();
+			}
 			loader.hide();
 			content.show();
 		}).catch(function(error) {
 			console.log(error);
 		});
+	},
+
+	castVote: function()
+	{
+		var candidateId = $('#candidateSelect').val();
+		// console.log(candidateId);
+		debugger;
+		App.contracts.Election.deployed().then( function(instance) {
+			return instance.vote(candidateId, { from : App.account });
+		}).then( function(result) {
+			$('#content').hide();
+			$('loader').show();
+		}).catch(function (err) {
+			console.log(err);
+		});
 	}
-	// render: function() {
-	// 	var electionInstance;
-	// 	var loader = $("#loader");
-	// 	var content = $("#content");
-	
-	// 	loader.show();
-	// 	content.hide();
-	
-	// 	// Load account data
-	// 	web3.eth.getCoinbase(function(err, account) {
-	// 	  if (err === null) {
-	// 		App.account = account;
-	// 		$("#accountAddress").html("Your Account: " + account);
-	// 	  }
-	// 	});
-	
-	// 	// Load contract data
-	// 	App.contracts.Election.deployed().then(function(instance) {
-	// 	  electionInstance = instance;
-	// 	  return electionInstance.candidatesCount();
-	// 	}).then(function(candidatesCount) {
-	// 	  var candidatesResults = $("#candidatesResults");
-	// 	  candidatesResults.empty();
-	
-	// 	  var candidatesSelect = $('#candidatesSelect');
-	// 	  candidatesSelect.empty();
-	
-	// 	  for (var i = 1; i <= candidatesCount; i++) {
-	// 		electionInstance.candidates(i).then(function(candidate) {
-	// 		  var id = candidate[0];
-	// 		  var name = candidate[1];
-	// 		  var voteCount = candidate[2];
-	
-	// 		  // Render candidate Result
-	// 		  var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
-	// 		  candidatesResults.append(candidateTemplate);
-	
-	// 		  // Render candidate ballot option
-	// 		  var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
-	// 		  candidatesSelect.append(candidateOption);
-	// 		});
-	// 	  }
-	// 	  return electionInstance.voters(App.account);
-	// 	}).then(function(hasVoted) {
-	// 	  // Do not allow a user to vote
-	// 	  if(hasVoted) {
-	// 		$('form').hide();
-	// 	  }
-	// 	  loader.hide();
-	// 	  content.show();
-	// 	}).catch(function(error) {
-	// 	  console.warn(error);
-	// 	});
-	//   },
 };
 
 $(function () {
