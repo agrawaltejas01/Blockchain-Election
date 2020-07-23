@@ -16,10 +16,11 @@ class Content extends React.Component {
         }
 
         <hr />
-        {!this.props.hasVoted ?
+        {/* {!this.props.hasVoted ?
           <Form candidates={this.props.candidates} castVote={this.props.castVote} />
           : null
-        }
+        } */}
+        <Form candidates={this.props.candidates} castVote={this.props.castVote} />
         <p>Your account: {this.props.account}</p>
       </div>
     )
