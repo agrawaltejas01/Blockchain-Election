@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "chai": "^4.2.0",
-    "mocha": "^8.0.1",
+    "mocha": "^8.4.0",
     "react": "^16.13.1",
     "webpack": "^4.43.0"
   }
